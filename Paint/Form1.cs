@@ -1,18 +1,23 @@
 using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace Paint
 {
     public partial class Form1 : Form
     {
+        private List<Figure> fig = new List<Figure>();
+        private Painter pan;
         public Form1()
         {
             InitializeComponent();
 
-
+            pan = new Painter(fig);
             // Set default form size and to draw on bitmap
 
-            this.Width = 950;
-            this.Height = 700;
+            this.Width = 1089;
+            this.Height = 728;
+            //this.Width = 950;
+            //this.Height = 700;
             bm = new Bitmap(pic.Width, pic.Height);
             g = Graphics.FromImage(bm);
             g.Clear(Color.White);
@@ -34,7 +39,27 @@ namespace Paint
 
         private void pic_MouseDown(object sender, MouseEventArgs e)
         {
+            if ((index == 3 || index == 4) && e.Button == MouseButtons.Left)
+            {
+                Figure? gf = null;
 
+                if (index == 3)
+                {
+                    gf = new Rectan();
+
+                }
+                else if (index == 4)
+                {
+                    gf = new Circle();
+                }
+
+                if (gf != null)
+                {
+                    gf.AddPoint(e.Location);
+                    gf.Color = new_color;
+                    fig.Add(gf);
+                }
+            }
             // If user click on the pic canvas then set the paint bool value = true
             // and assign the click to pY
 
@@ -67,6 +92,14 @@ namespace Paint
                     py = px;
                 }
 
+                // Circle or Rectangle
+
+                if ((index == 3 || index == 4) && e.Button == MouseButtons.Left)
+                {
+                    fig[^1].AddPoint(e.Location);
+                    pic.Refresh();
+                }
+
                 // Next u need to resolve problem with drawing ellipse, rectangle, line with indexs.
                 // Use "Click" event on button and change index to select drawing mode.
             }
@@ -77,10 +110,8 @@ namespace Paint
 
         private void pic_MouseUp(object sender, MouseEventArgs e)
         {
-
-            // If mouse is up => paint = false
-
-            paint = false;
+           // If mouse is up => paint = false
+           paint = false;
         }
 
         private void btn_pencil_Click(object sender, EventArgs e)
@@ -95,7 +126,7 @@ namespace Paint
 
         private void pic_Paint(object sender, PaintEventArgs e)
         {
-            Graphics g = e.Graphics;
+            pan.Paint(e.Graphics);
 
             if (paint)
             {
@@ -110,6 +141,7 @@ namespace Paint
             // Method for clearing
 
             g.Clear(Color.White);
+            fig.Clear();
             pic.Image = bm;
             index = 0;
         }
@@ -155,6 +187,20 @@ namespace Paint
                 btm.Save(sfd.FileName, ImageFormat.Jpeg);
                 MessageBox.Show("Image Save Sucessfully.");
             }
+        }
+
+        private void btn_fill_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void btn_rect_Click(object sender, EventArgs e)
+        {
+            index = 3;
+        }
+
+        private void btn_ellipse_Click(object sender, EventArgs e)
+        {
+            index = 4;
         }
 
         int index;
