@@ -6,18 +6,12 @@ namespace Paint
     public partial class Form1 : Form
     {
         private List<Figure> fig = new List<Figure>();
-        private Painter pan;
         public Form1()
         {
             InitializeComponent();
 
-            pan = new Painter(fig);
-            // Set default form size and to draw on bitmap
-
             this.Width = 1089;
             this.Height = 728;
-            //this.Width = 950;
-            //this.Height = 700;
             bm = new Bitmap(pic.Width, pic.Height);
             g = Graphics.FromImage(bm);
             g.Clear(Color.White);
@@ -126,7 +120,13 @@ namespace Paint
 
         private void pic_Paint(object sender, PaintEventArgs e)
         {
-            pan.Paint(e.Graphics);
+            if (!paint)
+            {
+                foreach (var r in fig)
+                {
+                    r.Paint(g);
+                }
+            }
 
             if (paint)
             {
