@@ -11,8 +11,6 @@ namespace Paint
         {
             InitializeComponent();
 
-
-            pan = new Painter(fig);
             // Set default form size and to draw on bitmap
 
 
