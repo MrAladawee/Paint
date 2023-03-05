@@ -5,21 +5,39 @@ namespace Paint
 {
     public partial class Form1 : Form
     {
+
         private List<Figure> fig = new List<Figure>();
         public Form1()
         {
             InitializeComponent();
 
-            this.Width = 1089;
-            this.Height = 728;
+
+            pan = new Painter(fig);
+            // Set default form size and to draw on bitmap
+
+
+            this.Width = 1240;
+            this.Height = 940;
+            //this.Width = 950;
+            //this.Height = 700;
+
             bm = new Bitmap(pic.Width, pic.Height);
+
+            //Rectangle rectangle = Screen.PrimaryScreen.Bounds;
+            //bm = new Bitmap(rectangle.Width, rectangle.Height);
             g = Graphics.FromImage(bm);
             g.Clear(Color.White);
             pic.Image = bm;
 
+            p.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+            p.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+
+            erase.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+            erase.EndCap = System.Drawing.Drawing2D.LineCap.Round;
         }
 
         // Initialization default options
+        //
 
         Bitmap bm;
         Graphics g;
@@ -104,8 +122,8 @@ namespace Paint
 
         private void pic_MouseUp(object sender, MouseEventArgs e)
         {
-           // If mouse is up => paint = false
-           paint = false;
+            // If mouse is up => paint = false
+            paint = false;
         }
 
         private void btn_pencil_Click(object sender, EventArgs e)
@@ -176,7 +194,6 @@ namespace Paint
             p.Color = pic_color.BackColor;
         }
 
-        // Othet methods (fill)
         private void btn_save_Click(object sender, EventArgs e)
         {
             var sfd = new SaveFileDialog();
@@ -191,6 +208,7 @@ namespace Paint
 
         private void btn_fill_Click(object sender, EventArgs e)
         {
+            index = 7;
         }
 
         private void btn_rect_Click(object sender, EventArgs e)
@@ -203,6 +221,59 @@ namespace Paint
             index = 4;
         }
 
+        // Method to validate pixel old color before filling the shape to the new color
+        private void validate(Bitmap bm, Stack<Point> sp, int x, int y, Color old_color, Color new_color)
+        {
+            Color cx = bm.GetPixel(x, y);
+            if (cx == old_color)
+            {
+                sp.Push(new Point(x, y));
+                bm.SetPixel(x, y, new_color);
+            }
+        }
+
+        // Creating FloodFill function using validate method
+        public void Fill(Bitmap bm, int x, int y, Color new_clr)
+        {
+            Color old_color = bm.GetPixel(x, y);
+            Stack<Point> pixel = new Stack<Point>();
+            pixel.Push(new Point(x, y));
+            bm.SetPixel(x, y, new_clr);
+            if (old_color == new_clr) return;
+
+            // This method will get the old pixel color
+            // and fill new Color from the clicked point till the stack count > 0
+            // else if the old color is equal to new color then return
+
+            while (pixel.Count > 0)
+            {
+                Point pt = (Point)pixel.Pop();
+                if (pt.X > 0 && pt.Y > 0 && pt.X < bm.Width - 1 && pt.Y < bm.Height - 1)
+                {
+                    validate(bm, pixel, pt.X - 1, pt.Y, old_color, new_clr);
+                    validate(bm, pixel, pt.X, pt.Y - 1, old_color, new_clr);
+                    validate(bm, pixel, pt.X + 1, pt.Y, old_color, new_clr);
+                    validate(bm, pixel, pt.X, pt.Y + 1, old_color, new_clr);
+                }
+            }
+        }
+
+        private void pic_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (index == 7)
+            {
+                Point point = set_point(pic, e.Location);
+                Fill(bm, point.X, point.Y, new_color);
+            }
+        }
+
         int index;
+
+        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        {
+            p.Width = (int)(trackBar1.Value * 1.5);
+            erase.Width = (int)(trackBar1.Value * 3);
+        }
+
     }
 }
