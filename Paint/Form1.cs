@@ -46,6 +46,7 @@ namespace Paint
 
         ColorDialog cd = new ColorDialog();
         Color new_color;
+        float figureSizeMemory = 1f;
 
         private void pic_MouseDown(object sender, MouseEventArgs e)
         {
@@ -67,6 +68,7 @@ namespace Paint
                 {
                     gf.AddPoint(e.Location);
                     gf.Color = new_color;
+                    gf.penSize = figureSizeMemory;
                     fig.Add(gf);
                 }
             }
@@ -271,6 +273,7 @@ namespace Paint
         {
             p.Width = (int)(trackBar1.Value * 1.5);
             erase.Width = (int)(trackBar1.Value * 3);
+            figureSizeMemory = trackBar1.Value;
         }
 
     }
