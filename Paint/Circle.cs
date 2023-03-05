@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +13,7 @@ namespace Paint
         {
             try
             {
-                var p = new Pen(Color);
+                var p = new Pen(Color, penSize);
                 g.DrawEllipse(p, Rectangle);
             }
             catch
