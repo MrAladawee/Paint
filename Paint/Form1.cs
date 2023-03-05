@@ -7,10 +7,10 @@ namespace Paint
     {
 
         private List<Figure> fig = new List<Figure>();
-        private Painter pan;
         public Form1()
         {
             InitializeComponent();
+
 
             pan = new Painter(fig);
             // Set default form size and to draw on bitmap
@@ -20,6 +20,7 @@ namespace Paint
             this.Height = 940;
             //this.Width = 950;
             //this.Height = 700;
+
             bm = new Bitmap(pic.Width, pic.Height);
 
             //Rectangle rectangle = Screen.PrimaryScreen.Bounds;
@@ -137,7 +138,13 @@ namespace Paint
 
         private void pic_Paint(object sender, PaintEventArgs e)
         {
-            pan.Paint(e.Graphics);
+            if (!paint)
+            {
+                foreach (var r in fig)
+                {
+                    r.Paint(g);
+                }
+            }
 
             if (paint)
             {
