@@ -9,6 +9,7 @@ namespace Paint
 {
     public abstract class Figure
     {
+        public float penSize = 1f;
         private int? _x1 = null, _x2 = null, _y1 = null, _y2 = null;
         public int X => _x1 != null && _x2 != null ? Math.Min(_x1 ?? 0, _x2 ?? 0) : -1;
         public int Y => _y1 != null && _y2 != null ? Math.Min(_y1 ?? 0, _y2 ?? 0) : -1;
